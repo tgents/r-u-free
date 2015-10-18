@@ -14,8 +14,12 @@ body {
     margin: 0px;
     margin-right: auto;
     margin-left: auto;
-    width: 55%;
-    min-width: 820px;
+    width: 1050px;
+    min-width: 1050px;
+}
+
+#login{
+    visibility: visible;
 }
 
 .page-title{
@@ -63,5 +67,23 @@ body {
 
 .card .department {
     font-size: 125%;
+}
+
+#overlay{
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    line-height: 200px;
+    height: 200px;
+    margin-left: -150px;
+    margin-top: -100px;
+    background-color: #ffffff;
+    text-align: center;
+    border-radius: 5px;
+
+    z-index: 10; /* keep on top of other elements on the page */
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
 }
 

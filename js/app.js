@@ -1,21 +1,35 @@
-var http = require('http');
-var fs = require('fs');
+var app = angular.module("ListApp", ["firebase"]);
 
-function send404(response){
-    response.writeHead(404, {"Content-Type": "text/plain"});
-    response.write("Error 404: Page not found.");
-    response.end();
-}
+app.controller("AuthController", ["$scope", "$firebaseAuth", function($scope, $firebaseAuth) {
+        var ref = new Firebase("https://rufree.firebaseio.com");
+        $scope.authObj = $firebaseAuth(ref);
 
-function onRequest(request, response){
-    console.log("A user made a request" + request.url);
-    if(request.method == 'GET' && request.url == '/'){
-        response.writeHead(200, {"Content-Type": "text/html"});
-        fs.createReadStream("./index.html").pipe(response);
-    }else{
-        send404(response);
+        $scope.login = function(){
+            $scope.authObj.$authWithOAuthPopup("facebook").then(function(authData) {
+                $scope.authData = authData;
+                console.log(authData);
+                document.getElementById("login").style.visibility = "hidden";
+                document.getElementById("overlay").style.display = "none";
+                $scope.addUser();
+            }).catch(function(error) {
+                $scope.error = error;
+                console.log(error);
+            });
+        }
+
+        $scope.addUser = function(){
+            var newUser = ref.child("users");
+            newUser.set({
+                logid: $scope.authData.uid,
+                name: $scope.authData.facebook.displayName
+            });
+        }
     }
-}
+]);
 
-http.createServer(onRequest).listen(8888);
-console.log("Server is running...");
+app.controller("ListController", ["$firebaseObject",
+    function($firebaseObject) {
+        var ref = new Firebase("https://rufree.firebaseio.com");
+        $scope.profile = $firebaseObject(ref.child('profiles').child('phsyicsmarie'));
+    }
+]);
